@@ -22,12 +22,19 @@ class Module:
     def train(self):
         "Set the mode of this module and all descendent modules to `train`."
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        self.training = True
+        for module in self.__dict__["_modules"].values():
+            module.train()
+        
+        # raise NotImplementedError('Need to implement for Task 0.4')
 
     def eval(self):
         "Set the mode of this module and all descendent modules to `eval`."
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        self.training = False
+        for module in self.__dict__["_modules"].values():
+            module.eval()
+        #raise NotImplementedError('Need to implement for Task 0.4')
 
     def named_parameters(self):
         """
@@ -38,12 +45,28 @@ class Module:
             list of pairs: Contains the name and :class:`Parameter` of each ancestor parameter.
         """
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        list = []
+        for param_name, param_value in self.__dict__["_parameters"].items():
+            list.append([param_name, param_value])
+        for module_name, module in self.__dict__["_modules"].items():
+            dec_list = module.named_parameters()
+            for it in dec_list:
+                #TODO CHECK TYPE STR
+                it[0] = module_name + "." + it[0]
+            list = list + dec_list
+        return list
+        # raise NotImplementedError('Need to implement for Task 0.4')
 
     def parameters(self):
         "Enumerate over all the parameters of this module and its descendents."
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        list = []
+        for param_value in self.__dict__["_parameters"].values():
+            list.append(param_value)
+        for module in self.__dict__["_modules"].values():
+            list = list + module.parameters()
+        return list
+        # raise NotImplementedError('Need to implement for Task 0.4')
 
     def add_parameter(self, k, v):
         """

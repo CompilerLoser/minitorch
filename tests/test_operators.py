@@ -1,7 +1,9 @@
 from minitorch.operators import (
+    is_close,
     mul,
     add,
     neg,
+    reduce,
     relu,
     addLists,
     prod,
@@ -16,6 +18,7 @@ from minitorch.operators import (
     log_back,
     inv_back,
     sum,
+    zipWith,
 )
 from hypothesis import given
 from hypothesis.strategies import lists
@@ -105,7 +108,14 @@ def test_sigmoid(a):
     * it is  strictly increasing.
     """
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    assert sigmoid(a) <= 1.0
+    assert sigmoid(a) >= 0.0
+    assert sigmoid(0) == 0.5
+    assert sigmoid(a) - sigmoid(a - 1.0) >= 0
+    assert is_close(1.0 - sigmoid(a), sigmoid(-a))
+    #assert 1.0 - sigmoid(a) == sigmoid(-a)
+    
+   # raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
@@ -113,29 +123,34 @@ def test_sigmoid(a):
 def test_transitive(a, b, c):
     "Test the transitive property of less-than (a < b and b < c implies a < c)"
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    if (a < b) & (b < c):
+        assert a < c
+    # raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
-def test_symmetric():
+@given(small_floats, small_floats)
+def test_symmetric(a, b):
     """
     Write a test that ensures that :func:`minitorch.operators.mul` is symmetric, i.e.
     gives the same value regardless of the order of its input.
     """
-    None
+    # None
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    assert mul(a, b) == mul(b, a)
+    # raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
-def test_distribute():
-    r"""
+@given(small_floats, small_floats, small_floats)
+def test_distribute(a, b, c):
+    """
     Write a test that ensures that your operators distribute, i.e.
     :math:`z \times (x + y) = z \times x + z \times y`
     """
-    None
+    assert is_close(mul((a + b), c), (mul(a, c) + mul(b, c)))
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    # raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
@@ -145,7 +160,7 @@ def test_other():
     """
     None
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    # raise NotImplementedError('Need to implement for Task 0.2')
 
 
 # ## Task 0.3  - Higher-order functions
@@ -174,7 +189,10 @@ def test_sum_distribute(ls1, ls2):
     is the same as the sum of each element of `ls1` plus each element of `ls2`.
     """
     # TODO: Implement for Task 0.3.
-    raise NotImplementedError('Need to implement for Task 0.3')
+    reduce_y_after_x = add(reduce(add, 0)(ls1), reduce(add, 0)(ls2))
+    reduce_x_after_y = reduce(add, 0)(zipWith(add)(ls1, ls2))
+    assert is_close(reduce_x_after_y, reduce_y_after_x) 
+    # raise NotImplementedError('Need to implement for Task 0.3')
 
 
 @pytest.mark.task0_3
