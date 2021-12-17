@@ -45,10 +45,12 @@ def test_same_as_python(x, y):
 @pytest.mark.task0_1
 @given(small_floats)
 def test_relu(a):
+    res = relu(a)
+    assert isinstance(res, float)
     if a > 0:
-        assert relu(a) == a
+        assert res == a
     if a < 0:
-        assert relu(a) == 0.0
+        assert res == 0.0
 
 
 @pytest.mark.task0_1
@@ -86,6 +88,8 @@ def test_max(a):
 @pytest.mark.task0_1
 @given(small_floats)
 def test_eq(a):
+    assert isinstance(eq(a, a), float)
+    assert isinstance(eq(a, a - 1.0), float)
     assert eq(a, a) == 1.0
     assert eq(a, a - 1.0) == 0.0
     assert eq(a, a + 1.0) == 0.0
