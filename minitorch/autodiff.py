@@ -274,6 +274,22 @@ class FunctionBase:
         # Tip: Note when implementing this function that
         # cls.backward may return either a value or a tuple.
         # TODO: Implement for Task 1.3.
+
+        #single variable case:
+        # x             ->   g(x)             ------------>   f(g(x))         ->   output
+        # x:derivate    <-   g'(x)*d_output   <--d_output--   diff: f'(g(x))  <-   output  
+
+        ''' 
+        list = []
+        for idx in range(len(inputs)):
+            if not is_constant(inputs[idx]):
+                list.append((inputs[idx], derivates[idx]))
+        return list
+        '''
+        # :p
+        derivates = cls.backward(ctx, d_output)
+        return [(inputs[idx], derivates[idx]) for idx in range(len(inputs)) if not is_constant(inputs[idx])]
+ 
         raise NotImplementedError('Need to implement for Task 1.3')
 
 
