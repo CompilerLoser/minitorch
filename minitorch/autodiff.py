@@ -312,6 +312,22 @@ def topological_sort(variable):
                             starting from the right.
     """
     # TODO: Implement for Task 1.4.
+    
+    def DFS(var, order):
+        if var in order:
+            return     
+        if var.history.inputs:
+            for v in var.history.inputs:
+                if not is_constant(v):
+                    DFS(v, order)
+        order.append(var)
+
+    topological_order = []
+    DFS(variable, topological_order)
+
+    topological_order.reverse()
+    
+    return topological_order
     raise NotImplementedError('Need to implement for Task 1.4')
 
 
@@ -329,4 +345,5 @@ def backpropagate(variable, deriv):
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
+    order = topological_sort(variable)
     raise NotImplementedError('Need to implement for Task 1.4')
