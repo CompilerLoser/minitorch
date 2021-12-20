@@ -191,6 +191,7 @@ class History:
             list of numbers : a derivative with respect to `inputs`
         """
         # TODO: Implement for Task 1.4.
+        return self.last_fn.chain_rule(self.ctx, self.inputs, d_output)
         raise NotImplementedError('Need to implement for Task 1.4')
 
 
@@ -324,9 +325,8 @@ def topological_sort(variable):
 
     topological_order = []
     DFS(variable, topological_order)
-
     topological_order.reverse()
-    
+
     return topological_order
     raise NotImplementedError('Need to implement for Task 1.4')
 
@@ -345,5 +345,24 @@ def backpropagate(variable, deriv):
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
+    # sort Variables
     order = topological_sort(variable)
     raise NotImplementedError('Need to implement for Task 1.4')
+    # build dict { Variables, accumaulated deriv }
+    derivative_dict = {var.unique_id : 0.0 for var in order if not is_constant(var)}
+    derivative_dict[variable.unique_id] += deriv
+
+    print(order)
+    print(derivative_dict)
+    # backprop step by step :p
+    for var in order:
+        if var.is_leaf():
+            var.accumulate_derivative(derivative_dict[var.unique_id])
+            continue
+        inputs_d_output = var.history.backprop_step(derivative_dict[var.unique_id])
+        for input_var, back_d_output in inputs_d_output:
+            derivative_dict[input_var.unique_id] += back_d_output
+        print(var.history.inputs)
+        print(inputs_d_output)
+        print(derivative_dict)
+        
