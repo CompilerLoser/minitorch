@@ -313,14 +313,23 @@ def topological_sort(variable):
                             starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    
+
+    def in_order(variable, order):
+        for var in order:
+            if var.unique_id == variable.unique_id:
+                return True
+        return False
+
     def DFS(var, order):
-        if var in order:
-            return     
+
+        if in_order(var, order):
+            return 
+
         if var.history.inputs:
             for v in var.history.inputs:
                 if not is_constant(v):
                     DFS(v, order)
+
         order.append(var)
 
     topological_order = []
@@ -347,7 +356,7 @@ def backpropagate(variable, deriv):
     # TODO: Implement for Task 1.4.
     # sort Variables
     order = topological_sort(variable)
-    raise NotImplementedError('Need to implement for Task 1.4')
+    # raise NotImplementedError('Need to implement for Task 1.4')
     # build dict { Variables, accumaulated deriv }
     derivative_dict = {var.unique_id : 0.0 for var in order if not is_constant(var)}
     derivative_dict[variable.unique_id] += deriv
@@ -362,7 +371,5 @@ def backpropagate(variable, deriv):
         inputs_d_output = var.history.backprop_step(derivative_dict[var.unique_id])
         for input_var, back_d_output in inputs_d_output:
             derivative_dict[input_var.unique_id] += back_d_output
-        print(var.history.inputs)
-        print(inputs_d_output)
-        print(derivative_dict)
+#
         
