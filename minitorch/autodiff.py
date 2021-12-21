@@ -191,6 +191,7 @@ class History:
             list of numbers : a derivative with respect to `inputs`
         """
         # TODO: Implement for Task 1.4.
+        return self.last_fn.chain_rule(self.ctx, self.inputs, d_output)
         raise NotImplementedError('Need to implement for Task 1.4')
 
 
@@ -274,6 +275,25 @@ class FunctionBase:
         # Tip: Note when implementing this function that
         # cls.backward may return either a value or a tuple.
         # TODO: Implement for Task 1.3.
+
+        #single variable case:
+        # x             ->   g(x)             ------------>   f(g(x))         ->   output
+        # x:derivate    <-   g'(x)*d_output   <--d_output--   diff: f'(g(x))  <-   output  
+
+        ''' 
+        list = []
+        for idx in range(len(inputs)):
+            if not is_constant(inputs[idx]):
+                list.append((inputs[idx], derivates[idx]))
+        return list
+        '''
+        # :p
+        derivates = cls.backward(ctx, d_output)
+        if isinstance(derivates, tuple):
+            return [(inputs[idx], derivates[idx]) for idx in range(len(inputs)) if not is_constant(inputs[idx])]
+        if not is_constant(inputs[0]):
+            return [(inputs[0], derivates)]
+        return []
         raise NotImplementedError('Need to implement for Task 1.3')
 
 
@@ -296,6 +316,24 @@ def topological_sort(variable):
                             starting from the right.
     """
     # TODO: Implement for Task 1.4.
+
+    def in_order(variable, order):
+        for var in order:
+            if var.unique_id == variable.unique_id: return True
+        return False
+
+    def DFS(var, order):
+        if in_order(var, order): return 
+        if var.history.inputs:
+            for v in var.history.inputs:
+                if not is_constant(v): DFS(v, order)
+        order.append(var)
+
+    topological_order = []
+    DFS(variable, topological_order)
+    topological_order.reverse()
+
+    return topological_order
     raise NotImplementedError('Need to implement for Task 1.4')
 
 
@@ -313,4 +351,21 @@ def backpropagate(variable, deriv):
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    # sort Variables
+    order = topological_sort(variable)
+
+    # raise NotImplementedError('Need to implement for Task 1.4')
+    # build dict { Variables, accumaulated deriv }
+    derivative_dict = {var.unique_id : 0.0 for var in order if not is_constant(var)}
+    derivative_dict[variable.unique_id] += deriv
+
+    # backprop step by step :p
+    for var in order:
+        if var.is_leaf():
+            var.accumulate_derivative(derivative_dict[var.unique_id])
+            continue
+        inputs_d_output = var.history.backprop_step(derivative_dict[var.unique_id])
+        for input_var, back_d_output in inputs_d_output:
+            derivative_dict[input_var.unique_id] += back_d_output
+#
+        

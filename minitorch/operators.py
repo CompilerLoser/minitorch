@@ -130,7 +130,7 @@ def exp(x):
 def log_back(x, d):
     r"If :math:`f = log` as above, compute d :math:`d \times f'(x)`"
     # TODO: Implement for Task 0.1.
-    return d * log(x)
+    return d * 1/x
     raise NotImplementedError('Need to implement for Task 0.1')
 
 
