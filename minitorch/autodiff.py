@@ -289,8 +289,11 @@ class FunctionBase:
         '''
         # :p
         derivates = cls.backward(ctx, d_output)
-        return [(inputs[idx], derivates[idx]) for idx in range(len(inputs)) if not is_constant(inputs[idx])]
- 
+        if isinstance(derivates, tuple):
+            return [(inputs[idx], derivates[idx]) for idx in range(len(inputs)) if not is_constant(inputs[idx])]
+        if not is_constant(inputs[0]):
+            return [(inputs[0], derivates)]
+        return []
         raise NotImplementedError('Need to implement for Task 1.3')
 
 
@@ -316,20 +319,14 @@ def topological_sort(variable):
 
     def in_order(variable, order):
         for var in order:
-            if var.unique_id == variable.unique_id:
-                return True
+            if var.unique_id == variable.unique_id: return True
         return False
 
     def DFS(var, order):
-
-        if in_order(var, order):
-            return 
-
+        if in_order(var, order): return 
         if var.history.inputs:
             for v in var.history.inputs:
-                if not is_constant(v):
-                    DFS(v, order)
-
+                if not is_constant(v): DFS(v, order)
         order.append(var)
 
     topological_order = []
@@ -356,13 +353,12 @@ def backpropagate(variable, deriv):
     # TODO: Implement for Task 1.4.
     # sort Variables
     order = topological_sort(variable)
+
     # raise NotImplementedError('Need to implement for Task 1.4')
     # build dict { Variables, accumaulated deriv }
     derivative_dict = {var.unique_id : 0.0 for var in order if not is_constant(var)}
     derivative_dict[variable.unique_id] += deriv
 
-    print(order)
-    print(derivative_dict)
     # backprop step by step :p
     for var in order:
         if var.is_leaf():
