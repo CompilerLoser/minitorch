@@ -1,4 +1,6 @@
 import numpy as np
+
+from minitorch.operators import prod
 from .tensor_data import (
     to_index,
     index_to_position,
@@ -40,7 +42,12 @@ def tensor_map(fn):
 
     def _map(out, out_shape, out_strides, in_storage, in_shape, in_strides):
         # TODO: Implement for Task 2.2.
-        raise NotImplementedError('Need to implement for Task 2.2')
+        # same shape
+        for idx in range(int(prod(out_shape))):
+            out_index = np.array(out_shape)
+            to_index(idx, out_shape, out_index)
+            out[idx] = in_storage[index_to_position(out_index, in_strides)]
+        # raise NotImplementedError('Need to implement for Task 2.2')
 
     return _map
 

@@ -74,7 +74,9 @@ def broadcast_index(big_index, big_shape, shape, out_index):
         None : Fills in `out_index`.
     """
     # TODO: Implement for Task 2.2.
-    raise NotImplementedError('Need to implement for Task 2.2')
+    # Dont konw what does this function do, but it seems not be used in this project.
+    # keep the NotImplementedError for debug.
+    raise NotImplementedError('Need to implement for Task 2.2.@@@@@@@@@@@@@@@@@@@@@@@')
 
 
 def shape_broadcast(shape1, shape2):
@@ -92,6 +94,20 @@ def shape_broadcast(shape1, shape2):
         IndexingError : if cannot broadcast
     """
     # TODO: Implement for Task 2.2.
+    short = shape1 if len(shape2) > len(shape1) else shape2
+    long = shape1 if len(shape2) <= len(shape1) else shape2
+    short = list(short)
+    long = list(long)
+    while len(short) != len(long): short.insert(0, 1)
+    res = []
+    print(short)
+    print(long)
+    for i in range(len(short)):
+        if short[i] == long[i] or short[i] == 1 or long[i] == 1:
+            res.append(max(short[i], long[i]))
+        else:
+            raise IndexingError('cannot boradcast two shape.')
+    return tuple(res)
     raise NotImplementedError('Need to implement for Task 2.2')
 
 
