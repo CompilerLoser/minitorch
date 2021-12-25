@@ -2,6 +2,7 @@ import numpy as np
 
 from minitorch.operators import prod
 from .tensor_data import (
+    TensorData,
     to_index,
     index_to_position,
     broadcast_index,
@@ -42,12 +43,19 @@ def tensor_map(fn):
 
     def _map(out, out_shape, out_strides, in_storage, in_shape, in_strides):
         # TODO: Implement for Task 2.2.
-        # same shape
-        for idx in range(int(prod(out_shape))):
-            out_index = np.array(out_shape)
-            to_index(idx, out_shape, out_index)
-            out[idx] = in_storage[index_to_position(out_index, in_strides)]
-        # raise NotImplementedError('Need to implement for Task 2.2')
+        # same shape, but in and out can have different strides.
+        out_td = TensorData(out, out_shape, out_strides)
+        for idx in out_td.indices():
+            out_td.set(idx, in_storage[index_to_position(idx, in_strides)])
+        
+        ''' broadcast version
+        for idx in out_td.indices():
+            in_idx = np.zeros(in_shape)
+            broadcast_index(idx, out_shape, in_shape, in_idx)
+            out_td.set(idx, in_storage[index_to_position(in_idx, in_strides)])
+        '''
+        return out_td
+        
 
     return _map
 

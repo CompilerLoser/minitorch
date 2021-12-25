@@ -74,9 +74,7 @@ def broadcast_index(big_index, big_shape, shape, out_index):
         None : Fills in `out_index`.
     """
     # TODO: Implement for Task 2.2.
-    # Dont konw what does this function do, but it seems not be used in this project.
-    # keep the NotImplementedError for debug.
-    raise NotImplementedError('Need to implement for Task 2.2.@@@@@@@@@@@@@@@@@@@@@@@')
+    raise NotImplementedError('Need to implement for Task 2.2. *******************')
 
 
 def shape_broadcast(shape1, shape2):
